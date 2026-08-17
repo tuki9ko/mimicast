@@ -24,10 +24,11 @@ Private S3
 | `infra/terraform`     | AWS リソース一式（S3 x3 / CloudFront x2 / Lambda / DynamoDB…） |
 | `infra/terraform/bootstrap` | state 用 S3 バケットと Route 53 ホストゾーン（初回のみ実行）          |
 | `scripts`             | 管理者作成・管理画面デプロイの補助スクリプト                                |
-| `docs`                | 要件定義書・設計書（Git 管理外）                                    |
 
+要件定義書と設計書はこのリポジトリには含めていない。
 主要な設計判断（CloudFront の 2 ディストリビューション分離、S3 の 2 バケット構成、
-Signed URL の Canned Policy 採用など）の理由は `docs/design.md` を参照。
+Signed URL の Canned Policy 採用など）の理由は、該当するコードのコメントと
+末尾の「変えてはいけない設計」に記載している。
 
 ## 前提
 
@@ -126,7 +127,7 @@ openssl genrsa -out private_key.pem 2048
 openssl rsa -pubout -in private_key.pem -out public_key.pem
 ```
 
-秘密鍵は Git へコミットしない。Terraform へも渡さない（NFR-004）。
+秘密鍵は Git へコミットしない。Terraform へも渡さない。
 
 ### 2. Lambda をビルドする
 
