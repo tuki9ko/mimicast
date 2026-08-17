@@ -28,9 +28,9 @@ resource "aws_cognito_user_pool" "admin" {
     }
   }
 
-  user_pool_add_ons {
-    advanced_security_mode = "AUDIT"
-  }
+  # user_pool_add_ons {
+  #   advanced_security_mode = "AUDIT"
+  # }
 }
 
 resource "aws_cognito_user_pool_client" "admin" {
