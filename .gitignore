@@ -10,12 +10,12 @@ dist/
 # terraform
 .terraform/
 .build/
-# .terraform.lock.hcl はプロバイダのバージョンを固定するためコミットする
 *.tfstate
 *.tfstate.*
 *.tfvars
 !*.tfvars.example
 backend.hcl
+*.tfplan
 crash.log
 
 # secrets / keys
