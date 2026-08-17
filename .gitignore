@@ -13,10 +13,13 @@ dist/
 *.tfstate
 *.tfstate.*
 *.tfvars
+*.tfvars.json
 !*.tfvars.example
-backend.hcl
+backend*.hcl
+!backend*.hcl.example
 *.tfplan
 crash.log
+crash.*.log
 
 # secrets / keys
 *.pem
@@ -27,4 +30,5 @@ public_key*
 .env
 .env.*
 !.env.example
+.envrc
 .DS_Store
