@@ -155,13 +155,17 @@ ACM の DNS 検証が完了するまで数分かかる。
 
 ### 4. 秘密鍵を Secrets Manager へ投入する
 
-Terraform が作るのは Secret の入れ物のみ。値は CLI で入れる。
+Terraform が作るのは Secret の入れ物のみ。値はこの経路で入れる。
 
 ```bash
-aws secretsmanager put-secret-value \
-  --secret-id "$(terraform -chdir=infra/terraform output -raw cloudfront_private_key_secret_name)" \
-  --secret-string "file://private_key.pem"
+./scripts/put-signing-key.sh                       # 既定: infra/terraform/private_key.pem
+./scripts/put-signing-key.sh path/to/private_key.pem
 ```
+
+投入前に、CloudFront へ登録した公開鍵と対応しているかを確認する。
+食い違うと発行した URL が理由の分からない 403 になるため。
+
+投入後は手元の秘密鍵を消してもよい（鍵の入れ替えはローテーション手順で行う）。
 
 ### 5. 管理者ユーザーを作る
 
@@ -175,9 +179,10 @@ aws secretsmanager put-secret-value \
 
 ### 6. 管理画面をビルドしてデプロイする
 
-`terraform output` の値を `packages/frontend/.env` へ設定してからビルドする。
+`.env` は `terraform output` から生成する。
 
 ```bash
+./scripts/write-frontend-env.sh
 ./scripts/deploy-admin-site.sh
 ```
 

@@ -10,7 +10,7 @@ repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 tf_dir="$repo_root/infra/terraform"
 
 if [[ ! -f "$repo_root/packages/frontend/.env" ]]; then
-  echo "packages/frontend/.env がありません（.env.example を参照）" >&2
+  echo "packages/frontend/.env がありません。先に ./scripts/write-frontend-env.sh を実行してください" >&2
   exit 1
 fi
 
