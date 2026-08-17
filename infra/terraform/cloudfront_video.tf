@@ -29,7 +29,7 @@ resource "aws_cloudfront_public_key" "signing" {
     precondition {
       condition = can(
         regex("^-----BEGIN PUBLIC KEY-----[\\sA-Za-z0-9+/=]+-----END PUBLIC KEY-----$",
-        local.cloudfront_public_key)
+        trimspace(local.cloudfront_public_key))
       )
       error_message = <<-EOT
         cloudfront_public_key に有効な PEM 公開鍵が設定されていない。

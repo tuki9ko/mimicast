@@ -112,8 +112,9 @@ export function buildJobSettings(input: BuildJobSettingsInput): JobSettings {
                   ParControl: "INITIALIZE_FROM_SOURCE",
                   GopSizeUnits: "AUTO",
                   SceneChangeDetect: "TRANSITION_DETECTION",
-                  SpatialAdaptiveQuantization: "ENABLED",
-                  TemporalAdaptiveQuantization: "ENABLED",
+                  // AdaptiveQuantization は既定の AUTO に任せる。
+                  // AUTO のときに Spatial / Temporal / Flicker を個別指定すると
+                  // MediaConvert が CreateJob を 400 で拒否する。
                   NumberBFramesBetweenReferenceFrames: 2,
                   GopBReference: "ENABLED",
                 },

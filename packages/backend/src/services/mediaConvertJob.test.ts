@@ -60,6 +60,18 @@ test("フレームレートは入力へ追従する（水増ししない）", ()
   assert.equal(h264?.QvbrSettings?.QvbrQualityLevel, 8);
 });
 
+test("AdaptiveQuantization が AUTO のとき個別指定を含めない", () => {
+  // AUTO と Spatial / Temporal / Flicker の併記は CreateJob が 400 で拒否する
+  const h264 =
+    firstOutput(buildJobSettings(base)).VideoDescription?.CodecSettings
+      ?.H264Settings;
+  assert.ok(h264);
+  assert.equal(h264.AdaptiveQuantization, undefined);
+  assert.equal(h264.SpatialAdaptiveQuantization, undefined);
+  assert.equal(h264.TemporalAdaptiveQuantization, undefined);
+  assert.equal(h264.FlickerAdaptiveQuantization, undefined);
+});
+
 test("音声は AAC-LC / 48kHz / ステレオ", () => {
   const audio = firstOutput(buildJobSettings(base)).AudioDescriptions?.[0];
   const aac = audio?.CodecSettings?.AacSettings;
