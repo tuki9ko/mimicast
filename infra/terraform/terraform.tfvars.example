@@ -13,15 +13,21 @@ dns_zone_name = "vrc.example.jp"
 
 alert_email = "admin@example.jp"
 
-# CloudFront Signed URL 用の公開鍵。
+# CloudFront Signed URL 用の公開鍵。先に鍵ペアを生成する。
 #   openssl genrsa -out private_key.pem 2048
 #   openssl rsa -pubout -in private_key.pem -out public_key.pem
 # 秘密鍵は Terraform へ渡さず、Secrets Manager へ CLI で投入する。
-cloudfront_public_key = <<-EOT
-  -----BEGIN PUBLIC KEY-----
-  MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8A...
-  -----END PUBLIC KEY-----
-EOT
+#
+# ファイルを指定する方法（推奨。貼り付けミスが起きない）。
+# パスはこのディレクトリからの相対パス。
+cloudfront_public_key_path = "../../public_key.pem"
+
+# PEM を直接書く場合は上を消してこちらを使う
+# cloudfront_public_key = <<-EOT
+#   -----BEGIN PUBLIC KEY-----
+#   （公開鍵の内容をそのまま貼る）
+#   -----END PUBLIC KEY-----
+# EOT
 
 # 既定は 64 GiB
 max_upload_bytes = 68719476736

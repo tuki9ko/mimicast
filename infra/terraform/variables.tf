@@ -37,13 +37,25 @@ variable "admin_subdomain" {
   default     = "admin"
 }
 
+variable "cloudfront_public_key_path" {
+  description = <<-EOT
+    CloudFront Signed URL 用の公開鍵 PEM のパス（このディレクトリからの相対パス）。
+    例: "../../public_key.pem"
+    cloudfront_public_key とどちらか一方を指定する。
+  EOT
+  type        = string
+  default     = null
+}
+
 variable "cloudfront_public_key" {
   description = <<-EOT
-    CloudFront Signed URL 用の公開鍵（PEM）。
+    CloudFront Signed URL 用の公開鍵（PEM 文字列）。
+    ファイルから読ませる場合は cloudfront_public_key_path を使う。
     鍵ペアは手動で生成し、秘密鍵は Secrets Manager へ CLI で投入する。
     秘密鍵を Terraform へ渡してはならない。
   EOT
   type        = string
+  default     = null
 }
 
 variable "alert_email" {

@@ -20,10 +20,26 @@ resource "aws_cloudfront_origin_access_control" "media" {
 resource "aws_cloudfront_public_key" "signing" {
   name        = "${local.name_prefix}-signing-key"
   comment     = "mimicast signed URL public key"
-  encoded_key = var.cloudfront_public_key
+  encoded_key = local.cloudfront_public_key
 
   lifecycle {
     create_before_destroy = true
+
+    # CloudFront は不正な鍵を 400 で返すだけなので、plan の時点で止める
+    precondition {
+      condition = can(
+        regex("^-----BEGIN PUBLIC KEY-----[\\sA-Za-z0-9+/=]+-----END PUBLIC KEY-----$",
+        local.cloudfront_public_key)
+      )
+      error_message = <<-EOT
+        cloudfront_public_key に有効な PEM 公開鍵が設定されていない。
+        鍵ペアを生成し、cloudfront_public_key_path でファイルを指定するか、
+        cloudfront_public_key へ PEM 文字列を設定する。
+
+          openssl genrsa -out private_key.pem 2048
+          openssl rsa -pubout -in private_key.pem -out public_key.pem
+      EOT
+    }
   }
 }
 

@@ -77,7 +77,7 @@ resource "aws_cloudwatch_log_delivery" "admin" {
     "sc-bytes",
     "time-taken",
     "x-edge-result-type",
-    "cs-user-agent",
+    "cs(User-Agent)",
   ]
 
   s3_delivery_configuration {

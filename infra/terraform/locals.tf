@@ -32,4 +32,11 @@ locals {
 
   # バックエンドのビルド成果物
   backend_dist = "${path.module}/../../packages/backend/dist"
+
+  # 公開鍵はファイル指定を優先する。貼り付けミス（インデントや改行）を避けられる。
+  cloudfront_public_key = trimspace(
+    var.cloudfront_public_key_path != null
+    ? file("${path.module}/${var.cloudfront_public_key_path}")
+    : coalesce(var.cloudfront_public_key, "")
+  )
 }
