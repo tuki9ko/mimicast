@@ -214,3 +214,7 @@ SNS からメールが届くので、購読を承認する（CloudWatch Alarm �
   （403 が `index.html` の 200 へ化け、アクセス拒否が成立しなくなる）
 - 配信用と管理画面用の CloudFront / バケットを統合しない
 - 配信用 Cache Policy にクエリ文字列を含めない
+
+## ライセンス
+
+MIT License（[LICENSE](./LICENSE)）
