@@ -1,4 +1,4 @@
-# 設計 5 章。一覧は GSI1 の Query で取得する（Scan は使用しない・制約 24）。
+# 一覧は GSI1 の Query で取得する（Scan は使用しない）。
 
 resource "aws_dynamodb_table" "videos" {
   name         = "${local.name_prefix}-videos"

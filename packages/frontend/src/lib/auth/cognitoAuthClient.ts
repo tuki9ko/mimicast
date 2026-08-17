@@ -1,7 +1,7 @@
 /**
  * Cognito User Pool を使った AuthClient 実装。
  *
- * Cognito SDK への依存はこのファイルへ閉じ込める（設計 3.11 / 制約 29）。
+ * Cognito SDK への依存はこのファイルへ閉じ込める。
  * セッション（トークン）の保管は SDK が localStorage で行う。
  */
 

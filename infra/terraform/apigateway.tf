@@ -1,4 +1,3 @@
-# 設計 8 章 / 16 章 / 18.1。
 # 全エンドポイントで Cognito JWT Authorizer を必須にする。
 
 resource "aws_apigatewayv2_api" "api" {
@@ -6,7 +5,7 @@ resource "aws_apigatewayv2_api" "api" {
   protocol_type = "HTTP"
 
   cors_configuration {
-    # "*" は使用しない（制約 12）
+    # "*" は使用しない
     allow_origins     = local.cors_allowed_origins
     allow_methods     = ["GET", "POST", "PATCH", "DELETE", "OPTIONS"]
     allow_headers     = ["authorization", "content-type"]
@@ -22,7 +21,7 @@ resource "aws_apigatewayv2_authorizer" "cognito" {
   name             = "${local.name_prefix}-jwt"
 
   jwt_configuration {
-    # ID Token を検証対象とする（設計 17 章）
+    # ID Token を検証対象とする
     audience = [aws_cognito_user_pool_client.admin.id]
     issuer   = "https://cognito-idp.${var.region}.amazonaws.com/${aws_cognito_user_pool.admin.id}"
   }
@@ -37,7 +36,7 @@ resource "aws_apigatewayv2_integration" "api" {
 }
 
 locals {
-  # 設計 16 章の API 一覧。バックエンドの routes/index.ts と 1 対 1 で対応する。
+  # バックエンドの routes/index.ts と 1 対 1 で対応する。
   api_routes = [
     "GET /videos",
     "POST /videos",

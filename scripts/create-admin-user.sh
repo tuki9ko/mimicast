@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # 管理者ユーザーを作成する。
-# 自己登録は無効なので、必ずこの経路で作る（FR-001）。
+# 自己登録は無効なので、必ずこの経路で作る。
 #
 # 使い方: ./scripts/create-admin-user.sh you@example.com
 set -euo pipefail

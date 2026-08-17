@@ -1,4 +1,4 @@
-# CloudFront のカスタムドメインを使うため、証明書は us-east-1 で発行する（NFR-020）。
+# CloudFront のカスタムドメインを使うため、証明書は us-east-1 で発行する。
 
 resource "aws_acm_certificate" "video" {
   provider = aws.us_east_1

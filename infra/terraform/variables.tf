@@ -94,7 +94,7 @@ variable "expected_monthly_transfer_gb" {
 }
 
 variable "incomplete_multipart_upload_days" {
-  description = "未完了 Multipart Upload を破棄するまでの日数（NFR-013）"
+  description = "未完了 Multipart Upload を破棄するまでの日数"
   type        = number
   default     = 7
 }

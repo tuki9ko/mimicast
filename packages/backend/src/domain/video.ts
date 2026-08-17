@@ -1,7 +1,6 @@
 /**
  * Video ドメインモデル。
  *
- * 設計 5.2 / 7 章に対応する。
  * S3 キーの組み立てもここへ集約する（元動画のファイル名を S3 キーへ利用しない）。
  */
 
@@ -59,7 +58,7 @@ export function outputPrefixFor(id: string): string {
   return `videos/${id}/`;
 }
 
-/** 新規レコードを作る。配信許可は必ず DISABLED から始める（FR-050）。 */
+/** 新規レコードを作る。配信許可は必ず DISABLED から始める。 */
 export function newVideoRecord(
   id: string,
   input: NormalizedCreateVideoInput,
@@ -88,7 +87,7 @@ export function newVideoRecord(
 }
 
 /**
- * UPLOADING のまま放置されたレコードか判定する（設計 7.2）。
+ * UPLOADING のまま放置されたレコードか判定する。
  *
  * MVP では定期バッチを設けず、参照時の遅延評価で ERROR へ遷移させる。
  */

@@ -1,7 +1,3 @@
-/**
- * Multipart Upload 関連 API（設計 8.3）。
- */
-
 import type {
   CompletedPart,
   CreatePartUrlsResponse,

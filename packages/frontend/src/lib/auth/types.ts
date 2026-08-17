@@ -1,5 +1,5 @@
 /**
- * 認証の抽象インターフェース（設計 3.6）。
+ * 認証の抽象インターフェース。
  *
  * React コンポーネントは Cognito SDK ではなくこのインターフェースだけを利用する。
  * Astro 等へ移行した場合も、この実装はそのまま再利用できる。
@@ -31,7 +31,7 @@ export interface AuthClient {
   getCurrentUser(): Promise<AuthUser | null>;
   /**
    * API 呼び出しに使うトークン。
-   * 設計 17 章に従い ID Token を利用する（Authorizer の audience 検証に合わせるため）。
+   * ID Token を利用する（Authorizer の audience 検証に合わせるため）。
    */
   getIdToken(): Promise<string | null>;
 }

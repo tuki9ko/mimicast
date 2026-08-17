@@ -23,10 +23,10 @@ locals {
 
   admin_origin = "https://${local.admin_domain}"
 
-  # media bucket の CORS で許可するオリジン。"*" は使用しない（制約 12）。
+  # media bucket の CORS で許可するオリジン。"*" は使用しない。
   cors_allowed_origins = concat([local.admin_origin], var.allowed_dev_origins)
 
-  # S3 キーのプレフィックス。配信パスと 1 対 1 で対応する（制約 22）。
+  # S3 キーのプレフィックス。配信パスと 1 対 1 で対応する。
   source_prefix = "source/"
   output_prefix = "videos/"
 

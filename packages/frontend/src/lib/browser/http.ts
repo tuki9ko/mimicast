@@ -2,7 +2,7 @@
  * 進捗を取得できる PUT。
  *
  * fetch はアップロード進捗を取得できないため XMLHttpRequest を使う。
- * Browser API への依存はこのモジュールへ隔離する（設計 3.7）。
+ * Browser API への依存はこのモジュールへ隔離する。
  */
 
 export class HttpError extends Error {

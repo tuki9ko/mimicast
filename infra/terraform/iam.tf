@@ -1,4 +1,4 @@
-# すべての IAM Role は最小権限とする（NFR-006 / 制約 11）。
+# すべての IAM Role は最小権限とする。
 
 data "aws_iam_policy_document" "lambda_assume_role" {
   statement {

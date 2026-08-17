@@ -1,7 +1,6 @@
 /**
  * 構造化ログ（JSON）。
  *
- * 設計 19.1 に対応する。
  * Signed URL そのもの、および Signature パラメータをログへ出力してはならない。
  * 記録してよいのは videoId と expiresAt のみ。
  */

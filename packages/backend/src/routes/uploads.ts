@@ -1,5 +1,5 @@
 /**
- * Multipart Upload 関連のルート（設計 8.3）。
+ * Multipart Upload 関連のルート。
  *
  *   POST   /videos/{id}/uploads
  *   POST   /videos/{id}/uploads/{uploadId}/parts

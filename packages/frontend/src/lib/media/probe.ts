@@ -1,5 +1,5 @@
 /**
- * 元動画のメタデータ取得（FR-013 / 設計 3.7）。
+ * 元動画のメタデータ取得。
  *
  * HTMLVideoElement の videoWidth / videoHeight を loadedmetadata で取得する。
  * ブラウザが対応していないコーデック（MKV / MXF など）では取得できないため、

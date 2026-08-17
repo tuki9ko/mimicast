@@ -33,7 +33,7 @@ export async function getRequiredVideo(
 }
 
 /**
- * パスの uploadId が保存済みの uploadId と一致することを確認する（設計 8.3）。
+ * パスの uploadId が保存済みの uploadId と一致することを確認する。
  *
  * この検証がないと、任意の uploadId に対する Presigned URL を発行させられる余地が生じる。
  */
@@ -49,7 +49,7 @@ export function partCountOf(video: VideoRecord): number {
 }
 
 /**
- * UPLOADING のまま放置されたレコードを ERROR へ遷移させる（設計 7.2 の遅延評価）。
+ * UPLOADING のまま放置されたレコードを ERROR へ遷移させる（遅延評価）。
  *
  * 一覧・詳細の参照時に呼ぶ。DB 更新に失敗しても参照自体は成功させる。
  */

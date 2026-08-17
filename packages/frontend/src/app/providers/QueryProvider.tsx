@@ -1,5 +1,5 @@
 /**
- * Server State は TanStack Query で扱い、UI State と分離する（設計 3.8）。
+ * Server State は TanStack Query で扱い、UI State と分離する。
  */
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";

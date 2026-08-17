@@ -1,8 +1,4 @@
-/**
- * ルーティング表。API Gateway HTTP API の routeKey をそのままキーにする。
- *
- * 設計 16 章の API 一覧と 1 対 1 で対応する。
- */
+// ルーティング表。API Gateway HTTP API の routeKey をそのままキーにする。
 
 import { createPlaybackUrl } from "./playbackUrl.ts";
 import {

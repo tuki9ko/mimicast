@@ -1,4 +1,3 @@
-# 設計 10 章 / NFR-024。
 #
 # Lambda 側の処理失敗で MediaConvert の完了イベントが失われると、
 # 動画が TRANSCODING のまま復旧できなくなるため DLQ を必須とする。

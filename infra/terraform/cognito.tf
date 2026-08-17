@@ -1,10 +1,9 @@
-# 設計 17 章。
 # 自己登録は無効。管理者ユーザーは AWS コンソールまたは CLI で作成する。
 
 resource "aws_cognito_user_pool" "admin" {
   name = "${local.name_prefix}-admin"
 
-  # 自己登録を禁止する（FR-001）
+  # 自己登録を禁止する
   admin_create_user_config {
     allow_admin_create_user_only = true
   }

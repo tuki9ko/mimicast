@@ -1,9 +1,3 @@
-/**
- * Frontend / Backend 共有の型定義。
- *
- * 設計 5.2（Video Entity）および 8 章（API 設計）に対応する。
- */
-
 export type VideoStatus =
   | "UPLOADING"
   | "UPLOADED"

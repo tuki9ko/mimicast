@@ -43,7 +43,7 @@ export function createDependencies(): Dependencies {
       secretReader,
     }),
     now: () => new Date(),
-    // ULID は辞書順ソートが生成時刻順と一致する（設計 6 章）
+    // ULID は辞書順ソートが生成時刻順と一致する
     newId: () => ulid(),
   };
 }

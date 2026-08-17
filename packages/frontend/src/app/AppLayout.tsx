@@ -1,5 +1,5 @@
 /**
- * 管理画面のシェル。ルーティング依存は app / pages 層に限定する（設計 3.4）。
+ * 管理画面のシェル。ルーティング依存は app / pages 層に限定する。
  */
 
 import { NavLink, Outlet, useNavigate } from "react-router-dom";

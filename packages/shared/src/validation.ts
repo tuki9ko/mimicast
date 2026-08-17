@@ -1,7 +1,6 @@
 /**
  * Frontend / Backend 共有のバリデーション。
  *
- * 要件定義 FR-011 に対応する。
  * サーバー側の検証は必須であり、クライアント側検証のみに依存してはならない。
  * 同じ実装を両方から呼び出すことで、判定のズレを防ぐ。
  */
@@ -108,7 +107,6 @@ export function validateCreateVideoInput(
 
   if (!isPlainObject(input)) return ng("request body must be an object");
 
-  // title
   if (typeof input.title !== "string") return ng("title is required");
   const title = input.title.trim();
   if (title.length < 1 || title.length > TITLE_MAX_LENGTH) {
@@ -118,7 +116,6 @@ export function validateCreateVideoInput(
     return ng("title must not contain control characters");
   }
 
-  // filename
   if (typeof input.filename !== "string") return ng("filename is required");
   const filename = input.filename;
   if (filename.length < 1 || filename.length > FILENAME_MAX_LENGTH) {
@@ -138,7 +135,6 @@ export function validateCreateVideoInput(
     );
   }
 
-  // contentType
   if (typeof input.contentType !== "string") {
     return ng("contentType is required");
   }
@@ -146,7 +142,6 @@ export function validateCreateVideoInput(
     return ng(`contentType is not acceptable for ${extension}`);
   }
 
-  // size
   if (
     typeof input.size !== "number" ||
     !Number.isInteger(input.size) ||

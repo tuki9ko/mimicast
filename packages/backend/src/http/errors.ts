@@ -1,5 +1,5 @@
 /**
- * API のエラー表現。設計 8.1 のエラーレスポンス形式に対応する。
+ * API のエラー表現。
  */
 
 import type { ApiErrorCode } from "@mimicast/shared";

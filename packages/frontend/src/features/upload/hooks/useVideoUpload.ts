@@ -1,5 +1,5 @@
 /**
- * アップロード全体の進行状態を扱う（FR-014 / FR-015）。
+ * アップロード全体の進行状態を扱う。
  */
 
 import { useQueryClient } from "@tanstack/react-query";

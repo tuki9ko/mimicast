@@ -1,7 +1,7 @@
 # ---------------------------------------------------------------------------
 # media bucket（元動画・変換済み動画）
 #
-# 設計 4 章。動画用と管理画面静的ファイル用でバケットを分離する（制約 15）。
+# 動画用と管理画面静的ファイル用でバケットを分離する。
 # CORS 設定はバケット単位でしか行えないため、統合してはならない。
 # ---------------------------------------------------------------------------
 
@@ -37,9 +37,9 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "media" {
   }
 }
 
-# ブラウザからの Multipart Upload 用（NFR-012）。
+# ブラウザからの Multipart Upload 用。
 # ExposeHeaders の ETag は必須。これがないと CompleteMultipartUpload に必要な
-# ETag をブラウザから読み取れず、アップロードが完了しない（制約 27）。
+# ETag をブラウザから読み取れず、アップロードが完了しない。
 resource "aws_s3_bucket_cors_configuration" "media" {
   bucket = aws_s3_bucket.media.id
 
@@ -52,7 +52,7 @@ resource "aws_s3_bucket_cors_configuration" "media" {
   }
 }
 
-# 未完了 Multipart Upload はストレージ課金が継続するため必ず回収する（NFR-013）
+# 未完了 Multipart Upload はストレージ課金が継続するため必ず回収する。
 resource "aws_s3_bucket_lifecycle_configuration" "media" {
   bucket = aws_s3_bucket.media.id
 
@@ -68,7 +68,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "media" {
   }
 }
 
-# 許可するのは以下の 3 つのみ（設計 4.3）。
+# 許可するのは以下の 3 つのみ。
 #   1. 配信用 CloudFront の OAC による videos/* への GetObject
 #   2. MediaConvert 実行ロールによる source/* への GetObject
 #   3. MediaConvert 実行ロールによる videos/* への PutObject
@@ -151,7 +151,7 @@ resource "aws_s3_bucket_policy" "media" {
 # ---------------------------------------------------------------------------
 # admin-site bucket（管理画面の静的ファイル）
 #
-# CORS は設定しない（設計 4.8）。
+# CORS は設定しない。
 # ---------------------------------------------------------------------------
 
 resource "aws_s3_bucket" "admin_site" {

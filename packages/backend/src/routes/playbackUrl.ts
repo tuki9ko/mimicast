@@ -1,5 +1,5 @@
 /**
- * POST /videos/{id}/playback-url（設計 13 章）
+ * POST /videos/{id}/playback-url
  *
  * READY かつ ENABLED の動画のみ発行できる。
  * 生成した URL は DB へ保存せず、ログにも出力しない（videoId と expiresAt のみ記録する）。

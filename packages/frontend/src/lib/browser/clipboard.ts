@@ -1,7 +1,3 @@
-/**
- * クリップボード操作（設計 3.7）。
- */
-
 export async function copyToClipboard(text: string): Promise<void> {
   if (navigator.clipboard !== undefined && window.isSecureContext) {
     await navigator.clipboard.writeText(text);

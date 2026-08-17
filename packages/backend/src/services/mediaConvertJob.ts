@@ -1,7 +1,6 @@
 /**
  * MediaConvert のジョブ定義の組み立て（純関数）。
  *
- * 設計 9 章に対応する。
  * Job Template を使わず Lambda 内で組み立てるのは、解像度が動的に決まるため。
  * 固定部分をここへ切り出し、テストで検証できるようにしている。
  */
@@ -74,13 +73,13 @@ export function buildJobSettings(input: BuildJobSettingsInput): JobSettings {
               Mp4Settings: {
                 CslgAtom: "INCLUDE",
                 FreeSpaceBox: "EXCLUDE",
-                // 再生開始を早め、Range Request と相性を良くする（FR-023）
+                // 再生開始を早め、Range Request と相性を良くする
                 MoovPlacement: "PROGRESSIVE_DOWNLOAD",
               },
             },
             VideoDescription: {
               // 1080p 以下の入力では Width/Height を指定せず、入力解像度へ追従させる。
-              // 指定するとアップスケールされてしまうため（FR-022）。
+              // 指定するとアップスケールされてしまうため。
               ...(resolution === undefined
                 ? {}
                 : {
@@ -107,7 +106,7 @@ export function buildJobSettings(input: BuildJobSettingsInput): JobSettings {
                   MaxBitrate: MAX_BITRATE,
                   QualityTuningLevel: "SINGLE_PASS_HQ",
                   // 元動画のフレームレートへ追従する。SPECIFIED にすると
-                  // 30fps の入力を 60fps へ水増ししてしまう（FR-022）。
+                  // 30fps の入力を 60fps へ水増ししてしまう。
                   FramerateControl: "INITIALIZE_FROM_SOURCE",
                   FramerateConversionAlgorithm: "DUPLICATE_DROP",
                   ParControl: "INITIALIZE_FROM_SOURCE",
@@ -128,7 +127,7 @@ export function buildJobSettings(input: BuildJobSettingsInput): JobSettings {
                 CodecSettings: {
                   Codec: "AAC",
                   AacSettings: {
-                    // AAC-LC / 48kHz / ステレオ（FR-021）
+                    // AAC-LC / 48kHz / ステレオ
                     CodecProfile: "LC",
                     CodingMode: "CODING_MODE_2_0",
                     SampleRate: 48_000,

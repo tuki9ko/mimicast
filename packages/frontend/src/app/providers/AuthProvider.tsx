@@ -1,7 +1,7 @@
 /**
  * 認証状態の提供。
  *
- * Cognito SDK への依存は lib/auth 側にあり、ここでは AuthClient のみを扱う（設計 3.6）。
+ * Cognito SDK への依存は lib/auth 側にあり、ここでは AuthClient のみを扱う。
  */
 
 import {

@@ -1,5 +1,5 @@
 /**
- * VRChat 用 URL の発行パネル（FR-051 〜 FR-054）。
+ * VRChat 用 URL の発行パネル。
  */
 
 import { useState } from "react";

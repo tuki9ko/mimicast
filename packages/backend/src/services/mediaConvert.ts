@@ -44,7 +44,7 @@ export function createTranscoder(
           Role: options.roleArn,
           Queue: options.queueArn,
           Settings: buildJobSettings(input),
-          // 完了イベントから動画レコードを特定するために必須（設計 9.3）
+          // 完了イベントから動画レコードを特定するために必須
           UserMetadata: { videoId: input.videoId },
           StatusUpdateInterval: "SECONDS_60",
           AccelerationSettings: { Mode: "DISABLED" },

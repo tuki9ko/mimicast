@@ -1,5 +1,5 @@
 /**
- * ブラウザ → S3 の Multipart Upload（FR-012 / 設計 8.3）。
+ * ブラウザ → S3 の Multipart Upload。
  *
  * 動画本体は API サーバー / Lambda を経由させない。
  * バックエンドから受け取った Presigned URL に対して直接 PUT する。

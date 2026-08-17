@@ -1,7 +1,3 @@
-/**
- * 動画関連 API（設計 16 章）。
- */
-
 import type {
   CreateVideoRequest,
   CreateVideoResponse,

@@ -1,11 +1,11 @@
 # ---------------------------------------------------------------------------
-# 配信用 CloudFront（設計 11.1）
+# 配信用 CloudFront
 #
 # 最重要制約:
-#   - Custom Error Response を設定しない（制約 13）
+#   - Custom Error Response を設定しない
 #     403 が index.html の 200 へ置き換わり、アクセス拒否が成立しなくなるため。
-#   - 管理画面用ディストリビューションと統合しない（制約 14）
-#   - Cache Policy でクエリ文字列をキャッシュキーへ含めない（制約 16）
+#   - 管理画面用ディストリビューションと統合しない
+#   - Cache Policy でクエリ文字列をキャッシュキーへ含めない
 # ---------------------------------------------------------------------------
 
 resource "aws_cloudfront_origin_access_control" "media" {
@@ -16,7 +16,7 @@ resource "aws_cloudfront_origin_access_control" "media" {
   signing_protocol                  = "sigv4"
 }
 
-# Signed URL 検証用の公開鍵。秘密鍵は Secrets Manager にのみ置く（設計 12.1）。
+# Signed URL 検証用の公開鍵。秘密鍵は Secrets Manager にのみ置く。
 resource "aws_cloudfront_public_key" "signing" {
   name        = "${local.name_prefix}-signing-key"
   comment     = "mimicast signed URL public key"
@@ -27,7 +27,7 @@ resource "aws_cloudfront_public_key" "signing" {
   }
 }
 
-# Key Group は複数の公開鍵を保持できる。無停止ローテーションはこれを利用する（NFR-005）。
+# Key Group は複数の公開鍵を保持できる。無停止ローテーションはこれを利用する。
 resource "aws_cloudfront_key_group" "signing" {
   name  = "${local.name_prefix}-signing-keys"
   items = [aws_cloudfront_public_key.signing.id]
@@ -61,7 +61,7 @@ resource "aws_cloudfront_cache_policy" "video" {
 }
 
 # MediaConvert は S3 出力オブジェクトへ Cache-Control を設定できないため、
-# 配信用 CloudFront のレスポンスヘッダポリシーで付与する（設計 4.7）。
+# 配信用 CloudFront のレスポンスヘッダポリシーで付与する。
 resource "aws_cloudfront_response_headers_policy" "video" {
   name    = "${local.name_prefix}-video-headers"
   comment = "Long-term cache headers for video objects"
@@ -99,7 +99,7 @@ resource "aws_cloudfront_distribution" "video" {
     domain_name              = aws_s3_bucket.media.bucket_regional_domain_name
     origin_id                = "media"
     origin_access_control_id = aws_cloudfront_origin_access_control.media.id
-    # Origin Path は設定しない（配信パスと S3 キーを 1 対 1 に保つ・制約 22）
+    # Origin Path は設定しない（配信パスと S3 キーを 1 対 1 に保つ）
   }
 
   # /videos/* 以外は S3 の Bucket Policy が許可していないため到達できない
@@ -113,7 +113,7 @@ resource "aws_cloudfront_distribution" "video" {
     cache_policy_id            = aws_cloudfront_cache_policy.video.id
     response_headers_policy_id = aws_cloudfront_response_headers_policy.video.id
 
-    # 署名なしアクセスを拒否する（FR-052）
+    # 署名なしアクセスを拒否する
     trusted_key_groups = [aws_cloudfront_key_group.signing.id]
   }
 

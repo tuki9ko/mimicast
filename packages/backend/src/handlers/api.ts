@@ -1,7 +1,7 @@
 /**
  * API Lambda のエントリポイント。
  *
- * 認証は API Gateway の JWT Authorizer が行う（設計 17 章）。
+ * 認証は API Gateway の JWT Authorizer が行う。
  * ここでは routeKey に対応するハンドラへ振り分けるだけとする。
  */
 

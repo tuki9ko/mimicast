@@ -43,7 +43,7 @@ resource "aws_lambda_function" "api" {
       CF_DOMAIN    = local.video_domain
 
       CF_KEY_PAIR_ID = aws_cloudfront_public_key.signing.id
-      # 秘密鍵そのものではなく ARN のみを渡す（NFR-004 / 制約 5）
+      # 秘密鍵そのものではなく ARN のみを渡す
       CF_PRIVATE_KEY_SECRET_ARN = aws_secretsmanager_secret.cloudfront_private_key.arn
 
       MEDIACONVERT_ROLE_ARN = aws_iam_role.mediaconvert.arn

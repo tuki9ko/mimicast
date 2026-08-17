@@ -1,4 +1,4 @@
-# 設計 20 章 / NFR-023。通知先は SNS -> メール。
+# 通知先は SNS -> メール。
 
 resource "aws_sns_topic" "alerts" {
   name = "${local.name_prefix}-alerts"
@@ -61,7 +61,7 @@ resource "aws_cloudwatch_metric_alarm" "event_lambda_errors" {
   ok_actions    = [aws_sns_topic.alerts.arn]
 }
 
-# DLQ にメッセージが入った = 完了イベントを取りこぼしている（NFR-024）
+# DLQ にメッセージが入った = 完了イベントを取りこぼしている
 resource "aws_cloudwatch_metric_alarm" "event_dlq_messages" {
   alarm_name          = "${local.name_prefix}-event-dlq-messages"
   namespace           = "AWS/SQS"
@@ -115,7 +115,7 @@ resource "aws_cloudwatch_metric_alarm" "video_cf_5xx" {
   alarm_actions = [aws_sns_topic.alerts_us_east_1.arn]
 }
 
-# 想定月間転送量の 1/10 を 1 日で超えたら通知（NFR-015 / NFR-023）
+# 想定月間転送量の 1/10 を 1 日で超えたら通知
 resource "aws_cloudwatch_metric_alarm" "video_cf_bytes" {
   provider = aws.us_east_1
 
@@ -137,7 +137,6 @@ resource "aws_cloudwatch_metric_alarm" "video_cf_bytes" {
   alarm_actions = [aws_sns_topic.alerts_us_east_1.arn]
 }
 
-# 設計 20.2
 resource "aws_budgets_budget" "monthly" {
   name         = "${local.name_prefix}-monthly"
   budget_type  = "COST"

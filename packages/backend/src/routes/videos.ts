@@ -92,7 +92,7 @@ export const getVideo: RouteHandler = async (ctx, deps) => {
 /**
  * DELETE /videos/{id}
  *
- * どの状態からでも削除できる（FR-071）。状態に応じた後始末を先に行う。
+ * どの状態からでも削除できる。状態に応じた後始末を先に行う。
  */
 export const deleteVideo: RouteHandler = async (ctx, deps) => {
   const id = requirePathParam(ctx, "id");
