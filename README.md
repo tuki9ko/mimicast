@@ -22,6 +22,7 @@ Private S3
 | `packages/backend`    | API Lambda と MediaConvert Event Lambda（TypeScript）    |
 | `packages/frontend`   | 管理画面 SPA（React + TypeScript + Vite）                   |
 | `infra/terraform`     | AWS リソース一式（S3 x3 / CloudFront x2 / Lambda / DynamoDB…） |
+| `infra/terraform/bootstrap` | state 用 S3 バケット（初回のみ実行する別モジュール）                |
 | `scripts`             | 管理者作成・管理画面デプロイの補助スクリプト                                |
 | `docs`                | 要件定義書・設計書（Git 管理外）                                    |
 
@@ -61,6 +62,23 @@ npm run dev -w @mimicast/frontend       # http://localhost:5173
 
 実装順序・依存関係の都合上、この順番で行う。
 
+### 0. state 用の S3 バケットを作る（初回のみ）
+
+本体の state を S3 に置くため、先にバケットだけを別モジュールで作る。
+このモジュールの state はローカルに残る（バケットを作る側なので S3 へは置けない）。
+
+```bash
+cd infra/terraform/bootstrap
+terraform init
+terraform apply
+
+# 本体の backend 設定を生成する
+terraform output -raw backend_config > ../backend.hcl
+```
+
+ロックは S3 ネイティブロック（`use_lockfile`）を使うため、DynamoDB のロックテーブルは作らない。
+バケットはバージョニング有効・暗号化・Block Public Access 済み、`prevent_destroy` 付き。
+
 ### 1. 署名鍵ペアを作る
 
 ```bash
@@ -84,11 +102,16 @@ npm run build -w @mimicast/backend
 ```bash
 cd infra/terraform
 cp terraform.tfvars.example terraform.tfvars   # 値を埋める（public_key.pem の内容を含む）
-terraform init
+
+# backend は部分設定なので、init のときだけ backend.hcl を渡す
+terraform init -backend-config=backend.hcl
 terraform apply
 ```
 
 ACM の DNS 検証が完了するまで数分かかる。
+
+2 回目以降の `init` は `.terraform/` に設定がキャッシュされるため、
+`-backend-config` を付け直す必要はない（別マシンや CI では毎回渡す）。
 
 ### 4. 秘密鍵を Secrets Manager へ投入する
 

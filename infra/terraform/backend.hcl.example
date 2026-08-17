@@ -1,0 +1,9 @@
+# bootstrap モジュールが作った state バケットを指定する。
+#
+#   terraform -chdir=bootstrap output -raw backend_config > backend.hcl
+#
+# 生成後に `terraform init -backend-config=backend.hcl` を実行する。
+
+bucket = "mimicast-tfstate-123456789012"
+key    = "prod/terraform.tfstate"
+region = "ap-northeast-1"

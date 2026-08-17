@@ -135,3 +135,84 @@ aws budgets describe-budgets --account-id "$(aws sts get-caller-identity --query
 ```bash
 aws s3api list-multipart-uploads --bucket "$MEDIA_BUCKET"
 ```
+
+---
+
+## 6. Terraform state の取り扱い
+
+state は bootstrap モジュールが作った S3 バケットに置く。
+ロックは S3 ネイティブロック（`use_lockfile`）で、キーは `<state キー>.tflock`。
+
+```
+s3://{project}-tfstate-{account_id}/{env}/terraform.tfstate
+```
+
+### 別マシン / CI から操作する
+
+`backend.hcl` は Git 管理外なので、まず再生成する。
+
+```bash
+terraform -chdir=infra/terraform/bootstrap output -raw backend_config > infra/terraform/backend.hcl
+terraform -chdir=infra/terraform init -backend-config=backend.hcl
+```
+
+bootstrap の state はローカルにしかないため、それも手元にない場合は
+`backend.hcl` を手書きする（`backend.hcl.example` と同じ 3 行）か、バケットを import する。
+
+```bash
+terraform -chdir=infra/terraform/bootstrap import \
+  aws_s3_bucket.state "mimicast-tfstate-123456789012"
+```
+
+### ロックが残った場合
+
+apply の途中でプロセスが死ぬとロックが残る。エラーに出た ID を使って解除する。
+
+```bash
+terraform -chdir=infra/terraform force-unlock <LOCK_ID>
+```
+
+他に apply を実行しているプロセスがないことを確認してから行う。
+
+### state を壊した場合
+
+バケットはバージョニング有効なので、直前のバージョンへ戻せる。
+
+```bash
+aws s3api list-object-versions \
+  --bucket "$STATE_BUCKET" --prefix "prod/terraform.tfstate" \
+  --query 'Versions[].[LastModified,VersionId]' --output table
+
+aws s3api get-object \
+  --bucket "$STATE_BUCKET" --key "prod/terraform.tfstate" \
+  --version-id "$VERSION_ID" restored.tfstate
+
+terraform -chdir=infra/terraform state push restored.tfstate
+```
+
+非現行バージョンは 90 日で削除される（bootstrap の
+`noncurrent_version_expiration_days`）。
+
+### bootstrap の state を S3 へ移す（任意）
+
+複数人・複数マシンで扱う場合は、bootstrap 自身の state もバケットへ移せる。
+`infra/terraform/bootstrap/backend.tf` を作って init し直す。
+
+```hcl
+terraform {
+  backend "s3" {
+    bucket       = "mimicast-tfstate-123456789012"
+    key          = "bootstrap/terraform.tfstate"
+    region       = "ap-northeast-1"
+    encrypt      = true
+    use_lockfile = true
+  }
+}
+```
+
+```bash
+terraform -chdir=infra/terraform/bootstrap init -migrate-state
+```
+
+自分が管理するバケットへ自分の state を置く形になるが、
+バケットは `prevent_destroy` で保護されているため実運用上の問題はない。
