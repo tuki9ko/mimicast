@@ -15,7 +15,13 @@ locals {
   admin_site_bucket_name = "${local.name_prefix}-admin-site"
   logs_bucket_name       = "${local.name_prefix}-logs"
 
-  admin_origin = "https://${var.admin_domain}"
+  # ドメインはゾーン名から組み立てる（ゾーンとレコードの食い違いを防ぐ）
+  video_domain = "${var.video_subdomain}.${var.dns_zone_name}"
+  admin_domain = "${var.admin_subdomain}.${var.dns_zone_name}"
+
+  zone_id = data.aws_route53_zone.main.zone_id
+
+  admin_origin = "https://${local.admin_domain}"
 
   # media bucket の CORS で許可するオリジン。"*" は使用しない（制約 12）。
   cors_allowed_origins = concat([local.admin_origin], var.allowed_dev_origins)

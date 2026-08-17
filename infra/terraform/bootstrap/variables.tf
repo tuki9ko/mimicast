@@ -10,6 +10,16 @@ variable "region" {
   default     = "ap-northeast-1"
 }
 
+variable "dns_zone_name" {
+  description = <<-EOT
+    Route 53 に作成するホストゾーン名。
+    用意したドメインの一部を委譲する場合は "vrc.example.jp" のようなサブドメイン、
+    ドメイン全体を Route 53 で引く場合は "example.jp" を指定する。
+    本体モジュールの dns_zone_name と同じ値にすること。
+  EOT
+  type        = string
+}
+
 variable "env" {
   description = "state キーのプレフィックスに使う環境名。バケットは環境間で共用する"
   type        = string

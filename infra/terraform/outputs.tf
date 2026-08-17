@@ -46,9 +46,9 @@ output "mediaconvert_role_arn" {
 }
 
 output "admin_url" {
-  value = "https://${var.admin_domain}"
+  value = "https://${local.admin_domain}"
 }
 
 output "video_url_prefix" {
-  value = "https://${var.video_domain}/videos"
+  value = "https://${local.video_domain}/videos"
 }

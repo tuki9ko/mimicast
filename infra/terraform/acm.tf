@@ -3,7 +3,7 @@
 resource "aws_acm_certificate" "video" {
   provider = aws.us_east_1
 
-  domain_name       = var.video_domain
+  domain_name       = local.video_domain
   validation_method = "DNS"
 
   lifecycle {
@@ -21,7 +21,7 @@ resource "aws_route53_record" "video_cert_validation" {
     }
   }
 
-  zone_id         = var.route53_zone_id
+  zone_id         = local.zone_id
   name            = each.value.name
   type            = each.value.type
   records         = [each.value.value]
@@ -39,7 +39,7 @@ resource "aws_acm_certificate_validation" "video" {
 resource "aws_acm_certificate" "admin" {
   provider = aws.us_east_1
 
-  domain_name       = var.admin_domain
+  domain_name       = local.admin_domain
   validation_method = "DNS"
 
   lifecycle {
@@ -57,7 +57,7 @@ resource "aws_route53_record" "admin_cert_validation" {
     }
   }
 
-  zone_id         = var.route53_zone_id
+  zone_id         = local.zone_id
   name            = each.value.name
   type            = each.value.type
   records         = [each.value.value]

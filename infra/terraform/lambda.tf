@@ -40,7 +40,7 @@ resource "aws_lambda_function" "api" {
     variables = {
       MEDIA_BUCKET = aws_s3_bucket.media.bucket
       TABLE_NAME   = aws_dynamodb_table.videos.name
-      CF_DOMAIN    = var.video_domain
+      CF_DOMAIN    = local.video_domain
 
       CF_KEY_PAIR_ID = aws_cloudfront_public_key.signing.id
       # 秘密鍵そのものではなく ARN のみを渡す（NFR-004 / 制約 5）

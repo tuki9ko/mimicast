@@ -157,12 +157,19 @@ terraform -chdir=infra/terraform init -backend-config=backend.hcl
 ```
 
 bootstrap の state はローカルにしかないため、それも手元にない場合は
-`backend.hcl` を手書きする（`backend.hcl.example` と同じ 3 行）か、バケットを import する。
+`backend.hcl` を手書きする（`backend.hcl.example` と同じ 3 行）か、リソースを import する。
 
 ```bash
 terraform -chdir=infra/terraform/bootstrap import \
   aws_s3_bucket.state "mimicast-tfstate-123456789012"
+
+terraform -chdir=infra/terraform/bootstrap import \
+  aws_route53_zone.main "Z0123456789ABCDEFGHIJ"
 ```
+
+bootstrap が管理するのは state バケットと Route 53 ホストゾーンのみで、
+どちらも `prevent_destroy` 付き・既に存在するものなので、state を失っても
+サービスは止まらない（再作成されるとゾーンの NS が変わるため import で復帰させる）。
 
 ### ロックが残った場合
 

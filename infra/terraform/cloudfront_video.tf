@@ -91,7 +91,7 @@ resource "aws_cloudfront_distribution" "video" {
   enabled         = true
   is_ipv6_enabled = true
   comment         = "${local.name_prefix} video delivery"
-  aliases         = [var.video_domain]
+  aliases         = [local.video_domain]
   price_class     = var.cloudfront_price_class
   http_version    = "http2and3"
 

@@ -44,7 +44,7 @@ resource "aws_cloudfront_distribution" "admin" {
   enabled             = true
   is_ipv6_enabled     = true
   comment             = "${local.name_prefix} admin site"
-  aliases             = [var.admin_domain]
+  aliases             = [local.admin_domain]
   price_class         = var.cloudfront_price_class
   http_version        = "http2and3"
   default_root_object = "index.html"

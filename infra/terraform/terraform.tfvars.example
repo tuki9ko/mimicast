@@ -1,11 +1,15 @@
 env    = "prod"
 region = "ap-northeast-1"
 
-video_domain = "video.example.jp"
-admin_domain = "admin.example.jp"
+# bootstrap モジュールで作成した Route 53 ホストゾーン名（同じ値を指定する）。
+# 既定のサブドメイン設定では、以下のドメインが使われる。
+#   配信用     video.vrc.example.jp
+#   管理画面用  admin.vrc.example.jp
+dns_zone_name = "vrc.example.jp"
 
-# video / admin のレコードを作成するホストゾーン
-route53_zone_id = "Z0123456789ABCDEFGHIJ"
+# ラベルを変えたい場合のみ指定する
+# video_subdomain = "video"
+# admin_subdomain = "admin"
 
 alert_email = "admin@example.jp"
 

@@ -15,19 +15,26 @@ variable "region" {
   default     = "ap-northeast-1"
 }
 
-variable "video_domain" {
-  description = "配信用 CloudFront のドメイン（例: video.example.jp）"
+variable "dns_zone_name" {
+  description = <<-EOT
+    レコードを作成する Route 53 ホストゾーン名（例: vrc.example.jp）。
+    ゾーンは bootstrap モジュールが作成し、ここでは data source で参照する。
+    委譲（ドメイン側への NS 登録）が済んでいない状態で apply すると、
+    ACM の DNS 検証で待ち続けることになる。
+  EOT
   type        = string
 }
 
-variable "admin_domain" {
-  description = "管理画面用 CloudFront のドメイン（例: admin.example.jp）"
+variable "video_subdomain" {
+  description = "配信用ドメインのラベル。既定では video.{dns_zone_name} になる"
   type        = string
+  default     = "video"
 }
 
-variable "route53_zone_id" {
-  description = "video / admin のレコードを作成する Route 53 ホストゾーン ID"
+variable "admin_subdomain" {
+  description = "管理画面用ドメインのラベル。既定では admin.{dns_zone_name} になる"
   type        = string
+  default     = "admin"
 }
 
 variable "cloudfront_public_key" {

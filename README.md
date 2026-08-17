@@ -22,7 +22,7 @@ Private S3
 | `packages/backend`    | API Lambda と MediaConvert Event Lambda（TypeScript）    |
 | `packages/frontend`   | 管理画面 SPA（React + TypeScript + Vite）                   |
 | `infra/terraform`     | AWS リソース一式（S3 x3 / CloudFront x2 / Lambda / DynamoDB…） |
-| `infra/terraform/bootstrap` | state 用 S3 バケット（初回のみ実行する別モジュール）                |
+| `infra/terraform/bootstrap` | state 用 S3 バケットと Route 53 ホストゾーン（初回のみ実行）          |
 | `scripts`             | 管理者作成・管理画面デプロイの補助スクリプト                                |
 | `docs`                | 要件定義書・設計書（Git 管理外）                                    |
 
@@ -32,9 +32,10 @@ Signed URL の Canned Policy 採用など）の理由は `docs/design.md` を参
 ## 前提
 
 - Node.js 22 以上（型ストリップで `.ts` を直接実行するため）
-- Terraform 1.9 以上
+- Terraform 1.10 以上（S3 backend のネイティブロックを使うため）
 - AWS CLI
-- Route 53 のホストゾーンと、`video.*` / `admin.*` に使えるドメイン
+- ドメイン 1 つ（各自で用意する。レジストラは問わない。DNS は Route 53 で引き、
+  ゾーンへの委譲だけドメイン側で設定する。詳細はデプロイ手順 0.5）
 
 ## 開発
 
@@ -62,22 +63,61 @@ npm run dev -w @mimicast/frontend       # http://localhost:5173
 
 実装順序・依存関係の都合上、この順番で行う。
 
-### 0. state 用の S3 バケットを作る（初回のみ）
+### 0. state バケットと DNS ゾーンを作る（初回のみ）
 
-本体の state を S3 に置くため、先にバケットだけを別モジュールで作る。
-このモジュールの state はローカルに残る（バケットを作る側なので S3 へは置けない）。
+本体より先に作る必要があるものをまとめた別モジュール。
+
+- **state バケット** — 本体の backend が使う（バケットを作る側なので、このモジュールの state はローカルに残る）
+- **Route 53 ホストゾーン** — ドメイン側へ NS を登録する手作業が挟まるため本体から分離している
 
 ```bash
 cd infra/terraform/bootstrap
+cp terraform.tfvars.example terraform.tfvars   # dns_zone_name を埋める
 terraform init
 terraform apply
 
 # 本体の backend 設定を生成する
 terraform output -raw backend_config > ../backend.hcl
+
+# ドメイン側へ登録する NS レコードを表示する
+terraform output -raw ns_delegation_setup
 ```
 
-ロックは S3 ネイティブロック（`use_lockfile`）を使うため、DynamoDB のロックテーブルは作らない。
+state のロックは S3 ネイティブロック（`use_lockfile`）を使うため、DynamoDB のロックテーブルは作らない。
 バケットはバージョニング有効・暗号化・Block Public Access 済み、`prevent_destroy` 付き。
+
+### 0.5. ドメイン側で委譲を設定する
+
+ドメインは各自で用意する（レジストラは問わない）。本システムが DNS に求めるのは
+「Route 53 のゾーンへ委譲されていること」だけで、DNS の管理画面での作業は
+**NS レコード 4 本の登録のみ**。ステップ 0 の `ns_delegation_setup` に出た値を使う。
+
+**サブドメインを委譲する場合**（`dns_zone_name = "vrc.example.jp"` など）
+
+親ゾーンの DNS に NS レコードを追加する。既存のレコードには影響しない。
+
+| Type | Name | Value |
+| ---- | ---- | ----- |
+| NS | `vrc`（相対名で入力する DNS の場合。FQDN 形式なら `vrc.example.jp`） | `ns-xxx.awsdns-xx.com` を 4 本ぶん |
+
+**ドメイン全体を Route 53 で引く場合**（`dns_zone_name = "example.jp"` など）
+
+DNS レコードではなく、レジストラのネームサーバー設定を同じ 4 本へ変更する。
+この場合、メールなど既存のレコードも Route 53 側へ移す必要がある。
+
+> **重要**: DNS はレコードをそのまま引く設定にする。
+> プロキシ型 CDN や URL 転送を経由させると CloudFront の前段にもう 1 段挟まり、
+> Signed URL を前提とした配信経路（`VRChat → CloudFront → S3`）が崩れる。
+> 委譲方式なら NS レコードにプロキシ設定は付かないため、自動的に満たされる。
+
+委譲が効いたことを確認してから次へ進む。
+
+```bash
+dig +short NS vrc.example.jp        # Route 53 の NS が 4 本返ればよい
+```
+
+ここが未完了のまま本体を apply すると、`data "aws_route53_zone"` の解決に失敗するか、
+ACM の DNS 検証で待ち続けることになる。
 
 ### 1. 署名鍵ペアを作る
 
@@ -147,7 +187,7 @@ SNS からメールが届くので、購読を承認する（CloudWatch Alarm �
 
 ## 動作確認（受入条件の要点）
 
-- 署名なしで `https://video.example.jp/videos/{id}/video.mp4` を叩くと **403**
+- 署名なしで `https://video.vrc.example.jp/videos/{id}/video.mp4` を叩くと **403**
   （`index.html` の 200 が返らないこと）
 - 管理画面用ドメインでは `/videos/*` が配信されないこと
 - S3 の URL へ直接アクセスすると拒否されること
