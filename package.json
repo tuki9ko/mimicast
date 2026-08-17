@@ -1,0 +1,23 @@
+{
+  "name": "mimicast",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "VRChat video delivery manager on AWS",
+  "engines": {
+    "node": ">=22"
+  },
+  "workspaces": [
+    "packages/shared",
+    "packages/backend",
+    "packages/frontend"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2"
+  }
+}

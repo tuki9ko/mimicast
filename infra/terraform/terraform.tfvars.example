@@ -1,0 +1,29 @@
+env    = "prod"
+region = "ap-northeast-1"
+
+video_domain = "video.example.jp"
+admin_domain = "admin.example.jp"
+
+# video / admin のレコードを作成するホストゾーン
+route53_zone_id = "Z0123456789ABCDEFGHIJ"
+
+alert_email = "admin@example.jp"
+
+# CloudFront Signed URL 用の公開鍵。
+#   openssl genrsa -out private_key.pem 2048
+#   openssl rsa -pubout -in private_key.pem -out public_key.pem
+# 秘密鍵は Terraform へ渡さず、Secrets Manager へ CLI で投入する。
+cloudfront_public_key = <<-EOT
+  -----BEGIN PUBLIC KEY-----
+  MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8A...
+  -----END PUBLIC KEY-----
+EOT
+
+# 既定は 64 GiB
+max_upload_bytes = 68719476736
+
+# ローカル開発時のみ設定する
+# allowed_dev_origins = ["http://localhost:5173"]
+
+monthly_budget_usd           = 50
+expected_monthly_transfer_gb = 100

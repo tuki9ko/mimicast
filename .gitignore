@@ -1,0 +1,29 @@
+docs/
+
+# dependencies
+node_modules/
+
+# build artifacts
+dist/
+*.tsbuildinfo
+
+# terraform
+.terraform/
+.build/
+# .terraform.lock.hcl はプロバイダのバージョンを固定するためコミットする
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+crash.log
+
+# secrets / keys
+*.pem
+private_key*
+public_key*
+
+# local
+.env
+.env.*
+!.env.example
+.DS_Store
