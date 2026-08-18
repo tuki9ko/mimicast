@@ -164,7 +164,7 @@ terraform -chdir=infra/terraform/bootstrap import \
   aws_s3_bucket.state "mimicast-tfstate-123456789012"
 
 terraform -chdir=infra/terraform/bootstrap import \
-  aws_route53_zone.main "Z0123456789ABCDEFGHIJ"
+  'aws_route53_zone.main["video.example.jp"]' "Z0123456789ABCDEFGHIJ"
 ```
 
 bootstrap が管理するのは state バケットと Route 53 ホストゾーンのみで、

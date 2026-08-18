@@ -21,7 +21,7 @@ resource "aws_route53_record" "video_cert_validation" {
     }
   }
 
-  zone_id         = local.zone_id
+  zone_id         = local.video_zone_id
   name            = each.value.name
   type            = each.value.type
   records         = [each.value.value]
@@ -57,7 +57,7 @@ resource "aws_route53_record" "admin_cert_validation" {
     }
   }
 
-  zone_id         = local.zone_id
+  zone_id         = local.admin_zone_id
   name            = each.value.name
   type            = each.value.type
   records         = [each.value.value]

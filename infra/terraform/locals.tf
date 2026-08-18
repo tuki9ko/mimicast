@@ -15,11 +15,12 @@ locals {
   admin_site_bucket_name = "${local.name_prefix}-admin-site"
   logs_bucket_name       = "${local.name_prefix}-logs"
 
-  # ドメインはゾーン名から組み立てる（ゾーンとレコードの食い違いを防ぐ）
-  video_domain = "${var.video_subdomain}.${var.dns_zone_name}"
-  admin_domain = "${var.admin_subdomain}.${var.dns_zone_name}"
+  video_domain = var.video_domain
+  admin_domain = var.admin_domain
 
-  zone_id = data.aws_route53_zone.main.zone_id
+  # レコードを置くゾーン。ドメインごとに別のゾーンでも、共通の親ゾーンでもよい。
+  video_zone_id = data.aws_route53_zone.video.zone_id
+  admin_zone_id = data.aws_route53_zone.admin.zone_id
 
   admin_origin = "https://${local.admin_domain}"
 

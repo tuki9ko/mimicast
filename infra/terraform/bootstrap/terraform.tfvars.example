@@ -1,4 +1,9 @@
-dns_zone_name = "example.jp"
+# ドメイン全体を Route 53 で引く場合
+# dns_zone_names = ["example.jp"]
+
+# 配信用と管理画面用だけを委譲する場合
+# （レジストラがネームサーバーの変更を許さない場合はこちら）
+dns_zone_names = ["video.example.jp", "admin.example.jp"]
 
 env    = "prod"
 region = "ap-northeast-1"

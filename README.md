@@ -76,7 +76,7 @@ npm run dev -w @mimicast/frontend       # http://localhost:5173
 
 ```bash
 cd infra/terraform/bootstrap
-cp terraform.tfvars.example terraform.tfvars   # dns_zone_name を埋める
+cp terraform.tfvars.example terraform.tfvars   # dns_zone_names を埋める
 terraform init
 terraform apply
 
@@ -93,23 +93,45 @@ state のロックは S3 ネイティブロック（`use_lockfile`）を使う�
 ### 0.5. ドメイン側で委譲を設定する
 
 ドメインは各自で用意する（レジストラは問わない）。本システムが DNS に求めるのは
-「Route 53 のゾーンへ委譲されていること」だけで、DNS の管理画面での作業は
-**NS レコード 4 本の登録のみ**。ステップ 0 の `ns_delegation_setup` に出た値を使う。
+「Route 53 のゾーンへ委譲されていること」だけで、ドメイン側の作業は
+**ネームサーバーの登録のみ**。ステップ 0 の `ns_delegation_setup` に出た値を使う。
 
-**ドメイン全体を Route 53 で引く場合**（`dns_zone_name = "example.jp"`）
+**ドメイン全体を Route 53 で引く場合**
+
+```hcl
+# bootstrap
+dns_zone_names = ["example.jp"]
+
+# 本体
+video_domain    = "video.example.jp"
+admin_domain    = "admin.example.jp"
+video_zone_name = "example.jp"
+admin_zone_name = "example.jp"
+```
 
 レジストラのネームサーバー設定を、出力された 4 本へ変更する。
-`video.example.jp` / `admin.example.jp` で使えるようになる。
 そのドメインで他のレコード（メールなど）を使っている場合は、Route 53 側へ移す必要がある。
 
-**サブドメインだけ委譲する場合**（`dns_zone_name = "media.example.jp"` など）
+**配信用と管理画面用だけを委譲する場合**
 
-ドメインを他の用途でも使っていて、ネームサーバーごと移したくない場合はこちら。
-親ゾーンの DNS に NS レコードを追加する。既存のレコードには影響しない。
+```hcl
+# bootstrap
+dns_zone_names = ["video.example.jp", "admin.example.jp"]
+
+# 本体（ゾーン名の指定は不要。ドメイン自体がゾーン）
+video_domain = "video.example.jp"
+admin_domain = "admin.example.jp"
+```
+
+親ゾーンの DNS に、ゾーンごとの NS レコードを追加する。既存のレコードには影響しない。
 
 | Type | Name | Value |
 | ---- | ---- | ----- |
-| NS | `media`（相対名で入力する DNS の場合。FQDN 形式なら `media.example.jp`） | `ns-xxx.awsdns-xx.com` を 4 本ぶん |
+| NS | `video` | `video.example.jp` ゾーンの 4 本 |
+| NS | `admin` | `admin.example.jp` ゾーンの 4 本 |
+
+ドメインを他の用途でも使っている場合のほか、**レジストラがネームサーバーの変更を
+許可していない場合**（Cloudflare Registrar など）もこちらを使う。
 
 > **重要**: DNS はレコードをそのまま引く設定にする。
 > プロキシ型 CDN や URL 転送を経由させると CloudFront の前段にもう 1 段挟まり、
@@ -119,7 +141,7 @@ state のロックは S3 ネイティブロック（`use_lockfile`）を使う�
 委譲が効いたことを確認してから次へ進む。
 
 ```bash
-dig +short NS example.jp        # Route 53 の NS が 4 本返ればよい
+dig +short NS video.example.jp        # Route 53 の NS が 4 本返ればよい
 ```
 
 ここが未完了のまま本体を apply すると、`data "aws_route53_zone"` の解決に失敗するか、
