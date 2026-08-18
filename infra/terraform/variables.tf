@@ -65,6 +65,33 @@ variable "cloudfront_public_key" {
   default     = null
 }
 
+variable "cognito_mfa_configuration" {
+  description = <<-EOT
+    Cognito の MFA 設定。既定は必須（TOTP）。
+    "ON" 必須 / "OPTIONAL" 任意 / "OFF" 無効
+    MFA フローで詰まった場合の退避用に変数化している。
+  EOT
+  type        = string
+  default     = "ON"
+
+  validation {
+    condition     = contains(["ON", "OPTIONAL", "OFF"], var.cognito_mfa_configuration)
+    error_message = "cognito_mfa_configuration は ON / OPTIONAL / OFF のいずれか。"
+  }
+}
+
+variable "api_throttling_rate_limit" {
+  description = "API のスロットリング（秒あたりのリクエスト数）。管理者 1 名なら小さくてよい"
+  type        = number
+  default     = 5
+}
+
+variable "api_throttling_burst_limit" {
+  description = "API のスロットリング（バースト）"
+  type        = number
+  default     = 10
+}
+
 variable "alert_email" {
   description = "CloudWatch Alarm / Budgets の通知先メールアドレス"
   type        = string

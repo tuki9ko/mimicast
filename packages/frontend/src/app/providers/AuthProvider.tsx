@@ -28,7 +28,10 @@ export interface AuthContextValue {
   status: AuthStatus;
   user: AuthUser | null;
   login(username: string, password: string): Promise<LoginResult>;
-  completeNewPassword(newPassword: string): Promise<void>;
+  /** 続けて MFA 登録を求められることがあるため結果を返す */
+  completeNewPassword(newPassword: string): Promise<LoginResult>;
+  completeMfaSetup(totpCode: string): Promise<void>;
+  submitTotpCode(totpCode: string): Promise<void>;
   logout(): Promise<void>;
 }
 
@@ -62,25 +65,38 @@ export function AuthProvider({
     };
   }, [client]);
 
+  const applySignIn = useCallback((result: LoginResult): LoginResult => {
+    if (result.kind === "SIGNED_IN") {
+      setUser(result.user);
+      setStatus("authenticated");
+    }
+    return result;
+  }, []);
+
   const login = useCallback(
-    async (username: string, password: string) => {
-      const result = await client.login(username, password);
-      if (result.kind === "SIGNED_IN") {
-        setUser(result.user);
-        setStatus("authenticated");
-      }
-      return result;
-    },
-    [client],
+    async (username: string, password: string) =>
+      applySignIn(await client.login(username, password)),
+    [client, applySignIn],
   );
 
   const completeNewPassword = useCallback(
-    async (newPassword: string) => {
-      const result = await client.completeNewPassword(newPassword);
-      setUser(result.user);
-      setStatus("authenticated");
+    async (newPassword: string) =>
+      applySignIn(await client.completeNewPassword(newPassword)),
+    [client, applySignIn],
+  );
+
+  const completeMfaSetup = useCallback(
+    async (totpCode: string) => {
+      applySignIn(await client.completeMfaSetup(totpCode));
     },
-    [client],
+    [client, applySignIn],
+  );
+
+  const submitTotpCode = useCallback(
+    async (totpCode: string) => {
+      applySignIn(await client.submitTotpCode(totpCode));
+    },
+    [client, applySignIn],
   );
 
   const logout = useCallback(async () => {
@@ -90,8 +106,24 @@ export function AuthProvider({
   }, [client]);
 
   const value = useMemo<AuthContextValue>(
-    () => ({ status, user, login, completeNewPassword, logout }),
-    [status, user, login, completeNewPassword, logout],
+    () => ({
+      status,
+      user,
+      login,
+      completeNewPassword,
+      completeMfaSetup,
+      submitTotpCode,
+      logout,
+    }),
+    [
+      status,
+      user,
+      login,
+      completeNewPassword,
+      completeMfaSetup,
+      submitTotpCode,
+      logout,
+    ],
   );
 
   return <AuthContext value={value}>{children}</AuthContext>;

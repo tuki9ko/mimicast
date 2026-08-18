@@ -569,3 +569,11 @@ dd {
   font-size: 13px;
   margin-bottom: 20px;
 }
+
+.mfa-secret {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  resize: none;
+  overflow-wrap: anywhere;
+}

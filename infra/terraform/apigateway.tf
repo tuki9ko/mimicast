@@ -87,9 +87,11 @@ resource "aws_apigatewayv2_stage" "default" {
     })
   }
 
+  # 認証を通らないリクエストも API Gateway のリクエスト課金は発生するため、
+  # 想定利用（管理者 1 名）に見合う上限まで絞る。
   default_route_settings {
-    throttling_burst_limit = 20
-    throttling_rate_limit  = 20
+    throttling_burst_limit = var.api_throttling_burst_limit
+    throttling_rate_limit  = var.api_throttling_rate_limit
   }
 }
 
