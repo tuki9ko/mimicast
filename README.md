@@ -178,6 +178,11 @@ terraform apply
 
 ACM の DNS 検証が完了するまで数分かかる。
 
+S3 のバケット名はグローバルに一意である必要があるため、既定でアカウント ID が
+接尾辞として付く（`mimicast-prod-media-123456789012`）。`project` を変えなくても
+他のアカウントと衝突しない。名前を明示したい場合は `bucket_suffix` を指定する。
+
+
 2 回目以降の `init` は `.terraform/` に設定がキャッシュされるため、
 `-backend-config` を付け直す必要はない（別マシンや CI では毎回渡す）。
 

@@ -120,7 +120,25 @@ aws mediaconvert get-job --id "$JOB_ID"
 
 ---
 
-## 5. コストの確認
+## 5. S3 バケット名を変えるとき
+
+バケット名は変更できない。`bucket_suffix` や `project` を変えると、Terraform は
+バケットを作り直そうとする。中身が残っているバケットの削除は失敗するため、
+apply がエラーで止まる（データが消えることはない）。
+
+移行する場合は、新しいバケットを作ってから中身を移し、
+参照が切り替わったことを確認して旧バケットを削除する。
+
+```bash
+aws s3 sync s3://旧バケット s3://新バケット
+```
+
+動画の実体を移すため、`source/` と `videos/` の両方を対象にすること。
+DynamoDB のレコードはバケット名を持たない（キーのみ）ので、移行は不要。
+
+---
+
+## 6. コストの確認
 
 ```bash
 # 当月の Budgets 状況
@@ -138,7 +156,7 @@ aws s3api list-multipart-uploads --bucket "$MEDIA_BUCKET"
 
 ---
 
-## 6. Terraform state の取り扱い
+## 7. Terraform state の取り扱い
 
 state は bootstrap モジュールが作った S3 バケットに置く。
 ロックは S3 ネイティブロック（`use_lockfile`）で、キーは `<state キー>.tflock`。
