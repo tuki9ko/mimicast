@@ -75,7 +75,6 @@ dd {
   letter-spacing: 0.04em;
 }
 
-.layout__subtitle,
 .layout__username {
   color: var(--text-muted);
   font-size: 13px;

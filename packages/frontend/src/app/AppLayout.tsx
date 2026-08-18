@@ -21,7 +21,6 @@ export function AppLayout() {
       <header className="layout__header">
         <div className="layout__brand">
           <span className="layout__logo">mimicast</span>
-          <span className="layout__subtitle">動画配信管理</span>
         </div>
 
         <nav className="layout__nav">
