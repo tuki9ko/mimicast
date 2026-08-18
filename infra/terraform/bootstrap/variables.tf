@@ -13,8 +13,8 @@ variable "region" {
 variable "dns_zone_name" {
   description = <<-EOT
     Route 53 に作成するホストゾーン名。
-    用意したドメインの一部を委譲する場合は "vrc.example.jp" のようなサブドメイン、
-    ドメイン全体を Route 53 で引く場合は "example.jp" を指定する。
+    ドメイン全体を Route 53 で引く場合は "example.jp" のようにドメインそのもの、
+    サブドメインだけ委譲する場合は "media.example.jp" のような名前を指定する。
     本体モジュールの dns_zone_name と同じ値にすること。
   EOT
   type        = string

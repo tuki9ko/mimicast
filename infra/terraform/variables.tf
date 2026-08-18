@@ -17,7 +17,7 @@ variable "region" {
 
 variable "dns_zone_name" {
   description = <<-EOT
-    レコードを作成する Route 53 ホストゾーン名（例: vrc.example.jp）。
+    レコードを作成する Route 53 ホストゾーン名（例: example.jp）。
     ゾーンは bootstrap モジュールが作成し、ここでは data source で参照する。
     委譲（ドメイン側への NS 登録）が済んでいない状態で apply すると、
     ACM の DNS 検証で待ち続けることになる。

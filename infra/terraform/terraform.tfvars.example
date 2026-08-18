@@ -3,9 +3,9 @@ region = "ap-northeast-1"
 
 # bootstrap モジュールで作成した Route 53 ホストゾーン名（同じ値を指定する）。
 # 既定のサブドメイン設定では、以下のドメインが使われる。
-#   配信用     video.vrc.example.jp
-#   管理画面用  admin.vrc.example.jp
-dns_zone_name = "vrc.example.jp"
+#   配信用     video.example.jp
+#   管理画面用  admin.example.jp
+dns_zone_name = "example.jp"
 
 # ラベルを変えたい場合のみ指定する
 # video_subdomain = "video"

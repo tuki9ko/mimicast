@@ -1,4 +1,4 @@
-dns_zone_name = "vrc.example.jp"
+dns_zone_name = "example.jp"
 
 env    = "prod"
 region = "ap-northeast-1"

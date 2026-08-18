@@ -1,5 +1,5 @@
 /**
- * VRChat 用 URL の発行パネル。
+ * 再生用 URL の発行パネル。
  */
 
 import { useState } from "react";
@@ -40,7 +40,7 @@ export function PlaybackUrlPanel({ video }: PlaybackUrlPanelProps) {
 
   return (
     <section className="card panel">
-      <h2 className="panel__title">VRChat 用 URL</h2>
+      <h2 className="panel__title">再生用 URL</h2>
 
       {!canIssue && (
         <Notice tone="info">
