@@ -27,6 +27,17 @@ resource "aws_cognito_user_pool" "admin" {
     }
   }
 
+  # 管理コンソール相当のため TOTP による MFA を必須とする。
+  # 初回ログイン時に認証アプリの登録（MFA_SETUP チャレンジ）が入る。
+  #
+  # 万一フロント側の MFA フローで詰まった場合は、変数を "OPTIONAL" にして
+  # apply すれば MFA なしでログインできる状態へ戻せる。
+  mfa_configuration = var.cognito_mfa_configuration
+
+  software_token_mfa_configuration {
+    enabled = var.cognito_mfa_configuration != "OFF"
+  }
+
   # user_pool_add_ons {
   #   advanced_security_mode = "AUDIT"
   # }
