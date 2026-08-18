@@ -33,6 +33,35 @@ locals {
   # バックエンドのビルド成果物
   backend_dist = "${path.module}/../../packages/backend/dist"
 
+  # 管理画面の CSP。
+  #
+  # 通信先を明示的に列挙する。これを落とすと以下が壊れるため注意する。
+  #   connect-src の API   -> 管理 API 呼び出し
+  #   connect-src の Cognito -> ログイン
+  #   connect-src の S3    -> ブラウザから直接送る Multipart Upload
+  #   media-src の blob:   -> 元動画の解像度取得（createObjectURL した video 要素）
+  #
+  # style-src に 'unsafe-inline' が必要なのは、React が style 属性を直接付けるため
+  # （進捗バーの幅など）。script-src は 'self' のみで絞る。
+  admin_csp = join("; ", [
+    "default-src 'self'",
+    "script-src 'self'",
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data:",
+    "font-src 'self'",
+    "media-src 'self' blob:",
+    join(" ", [
+      "connect-src 'self'",
+      aws_apigatewayv2_api.api.api_endpoint,
+      "https://cognito-idp.${var.region}.amazonaws.com",
+      "https://${aws_s3_bucket.media.bucket_regional_domain_name}",
+    ]),
+    "object-src 'none'",
+    "base-uri 'none'",
+    "form-action 'self'",
+    "frame-ancestors 'none'",
+  ])
+
   # 公開鍵はファイル指定を優先する。貼り付けミス（インデントや改行）を避けられる。
   #
   # 値は加工せずそのまま渡す。trimspace などで整形すると、末尾の改行の有無だけで

@@ -37,6 +37,12 @@ resource "aws_cloudfront_response_headers_policy" "admin" {
       referrer_policy = "same-origin"
       override        = true
     }
+
+    # ID トークンは localStorage に保存されるため、XSS の入口を塞ぐ
+    content_security_policy {
+      content_security_policy = local.admin_csp
+      override                = true
+    }
   }
 }
 
