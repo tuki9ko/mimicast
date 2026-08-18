@@ -107,7 +107,7 @@ aws mediaconvert get-job --id "$JOB_ID"
    削除済み動画へのアクセスは、発行済み URL の期限切れをもって遮断される。
 
 3. **有効期限が切れると再生中でもシークで停止する**
-   AVPro はシークのたびに新しい Range Request を出すため。
+   プレイヤーはシークのたびに新しい Range Request を出すため。
    管理画面にも同じ注意書きを表示している。
 
 4. **60fps 上限を厳密に保証しない**
@@ -164,7 +164,7 @@ terraform -chdir=infra/terraform/bootstrap import \
   aws_s3_bucket.state "mimicast-tfstate-123456789012"
 
 terraform -chdir=infra/terraform/bootstrap import \
-  aws_route53_zone.main "Z0123456789ABCDEFGHIJ"
+  'aws_route53_zone.main["video.example.jp"]' "Z0123456789ABCDEFGHIJ"
 ```
 
 bootstrap が管理するのは state バケットと Route 53 ホストゾーンのみで、

@@ -1,14 +1,17 @@
 # mimicast
 
-VRChat 向け動画配信管理システム。
+期限付き URL で動画を配信するための管理システム。
 
-4K などの元動画をブラウザからアップロードし、MediaConvert で VRChat 向けの
-1080p H.264/AAC MP4 へ変換して Private S3 に置き、管理画面から発行した
-**期限付き CloudFront Signed URL** でのみ再生できるようにする。
+4K などの元動画をブラウザからアップロードし、MediaConvert で
+1080p H.264/AAC の MP4 へ変換して Private な S3 に置く。動画は常時非公開で、
+管理画面から発行した**期限付き CloudFront Signed URL** でのみ再生できる。
+
+再生側に必要なのは「URL を入力できること」だけなので、URL を受け取れる
+プレイヤーであれば利用できる。
 
 ```
-VRChat
-   ↓ Signed URL
+プレイヤー / ブラウザ
+   ↓ Signed URL（期限付き）
 CloudFront（配信用・署名必須）
    ↓ OAC
 Private S3
@@ -73,7 +76,7 @@ npm run dev -w @mimicast/frontend       # http://localhost:5173
 
 ```bash
 cd infra/terraform/bootstrap
-cp terraform.tfvars.example terraform.tfvars   # dns_zone_name を埋める
+cp terraform.tfvars.example terraform.tfvars   # dns_zone_names を埋める
 terraform init
 terraform apply
 
@@ -90,31 +93,55 @@ state のロックは S3 ネイティブロック（`use_lockfile`）を使う�
 ### 0.5. ドメイン側で委譲を設定する
 
 ドメインは各自で用意する（レジストラは問わない）。本システムが DNS に求めるのは
-「Route 53 のゾーンへ委譲されていること」だけで、DNS の管理画面での作業は
-**NS レコード 4 本の登録のみ**。ステップ 0 の `ns_delegation_setup` に出た値を使う。
+「Route 53 のゾーンへ委譲されていること」だけで、ドメイン側の作業は
+**ネームサーバーの登録のみ**。ステップ 0 の `ns_delegation_setup` に出た値を使う。
 
-**サブドメインを委譲する場合**（`dns_zone_name = "vrc.example.jp"` など）
+**ドメイン全体を Route 53 で引く場合**
 
-親ゾーンの DNS に NS レコードを追加する。既存のレコードには影響しない。
+```hcl
+# bootstrap
+dns_zone_names = ["example.jp"]
+
+# 本体
+video_domain    = "video.example.jp"
+admin_domain    = "admin.example.jp"
+video_zone_name = "example.jp"
+admin_zone_name = "example.jp"
+```
+
+レジストラのネームサーバー設定を、出力された 4 本へ変更する。
+そのドメインで他のレコード（メールなど）を使っている場合は、Route 53 側へ移す必要がある。
+
+**配信用と管理画面用だけを委譲する場合**
+
+```hcl
+# bootstrap
+dns_zone_names = ["video.example.jp", "admin.example.jp"]
+
+# 本体（ゾーン名の指定は不要。ドメイン自体がゾーン）
+video_domain = "video.example.jp"
+admin_domain = "admin.example.jp"
+```
+
+親ゾーンの DNS に、ゾーンごとの NS レコードを追加する。既存のレコードには影響しない。
 
 | Type | Name | Value |
 | ---- | ---- | ----- |
-| NS | `vrc`（相対名で入力する DNS の場合。FQDN 形式なら `vrc.example.jp`） | `ns-xxx.awsdns-xx.com` を 4 本ぶん |
+| NS | `video` | `video.example.jp` ゾーンの 4 本 |
+| NS | `admin` | `admin.example.jp` ゾーンの 4 本 |
 
-**ドメイン全体を Route 53 で引く場合**（`dns_zone_name = "example.jp"` など）
-
-DNS レコードではなく、レジストラのネームサーバー設定を同じ 4 本へ変更する。
-この場合、メールなど既存のレコードも Route 53 側へ移す必要がある。
+ドメインを他の用途でも使っている場合のほか、**レジストラがネームサーバーの変更を
+許可していない場合**（Cloudflare Registrar など）もこちらを使う。
 
 > **重要**: DNS はレコードをそのまま引く設定にする。
 > プロキシ型 CDN や URL 転送を経由させると CloudFront の前段にもう 1 段挟まり、
-> Signed URL を前提とした配信経路（`VRChat → CloudFront → S3`）が崩れる。
+> Signed URL を前提とした配信経路（`プレイヤー → CloudFront → S3`）が崩れる。
 > 委譲方式なら NS レコードにプロキシ設定は付かないため、自動的に満たされる。
 
 委譲が効いたことを確認してから次へ進む。
 
 ```bash
-dig +short NS vrc.example.jp        # Route 53 の NS が 4 本返ればよい
+dig +short NS video.example.jp        # Route 53 の NS が 4 本返ればよい
 ```
 
 ここが未完了のまま本体を apply すると、`data "aws_route53_zone"` の解決に失敗するか、
@@ -193,7 +220,7 @@ SNS からメールが届くので、購読を承認する（CloudWatch Alarm �
 
 ## 動作確認（受入条件の要点）
 
-- 署名なしで `https://video.vrc.example.jp/videos/{id}/video.mp4` を叩くと **403**
+- 署名なしで `https://video.example.jp/videos/{id}/video.mp4` を叩くと **403**
   （`index.html` の 200 が返らないこと）
 - 管理画面用ドメインでは `/videos/*` が配信されないこと
 - S3 の URL へ直接アクセスすると拒否されること

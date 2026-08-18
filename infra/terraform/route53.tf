@@ -2,13 +2,20 @@
 # ホストゾーンは bootstrap モジュールが作成する（ドメイン側へ NS を登録して委譲する）。
 # ここでは参照のみ。ゾーンが無ければ apply は即座に失敗するため、
 # 委譲前に apply して ACM の検証待ちで固まることを避けられる。
-data "aws_route53_zone" "main" {
-  name         = var.dns_zone_name
+#
+# 配信用と管理画面用でゾーンが分かれていても、共通の親ゾーンでも動く。
+data "aws_route53_zone" "video" {
+  name         = coalesce(var.video_zone_name, var.video_domain)
+  private_zone = false
+}
+
+data "aws_route53_zone" "admin" {
+  name         = coalesce(var.admin_zone_name, var.admin_domain)
   private_zone = false
 }
 
 resource "aws_route53_record" "video_a" {
-  zone_id = local.zone_id
+  zone_id = local.video_zone_id
   name    = local.video_domain
   type    = "A"
 
@@ -20,7 +27,7 @@ resource "aws_route53_record" "video_a" {
 }
 
 resource "aws_route53_record" "video_aaaa" {
-  zone_id = local.zone_id
+  zone_id = local.video_zone_id
   name    = local.video_domain
   type    = "AAAA"
 
@@ -32,7 +39,7 @@ resource "aws_route53_record" "video_aaaa" {
 }
 
 resource "aws_route53_record" "admin_a" {
-  zone_id = local.zone_id
+  zone_id = local.admin_zone_id
   name    = local.admin_domain
   type    = "A"
 
@@ -44,7 +51,7 @@ resource "aws_route53_record" "admin_a" {
 }
 
 resource "aws_route53_record" "admin_aaaa" {
-  zone_id = local.zone_id
+  zone_id = local.admin_zone_id
   name    = local.admin_domain
   type    = "AAAA"
 
