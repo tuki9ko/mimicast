@@ -11,9 +11,12 @@ locals {
 
   account_id = data.aws_caller_identity.current.account_id
 
-  media_bucket_name      = "${local.name_prefix}-media"
-  admin_site_bucket_name = "${local.name_prefix}-admin-site"
-  logs_bucket_name       = "${local.name_prefix}-logs"
+  # S3 のバケット名はグローバルに一意である必要があるため接尾辞を付ける。
+  bucket_suffix = var.bucket_suffix == null ? local.account_id : var.bucket_suffix
+
+  media_bucket_name      = join("-", compact([local.name_prefix, "media", local.bucket_suffix]))
+  admin_site_bucket_name = join("-", compact([local.name_prefix, "admin-site", local.bucket_suffix]))
+  logs_bucket_name       = join("-", compact([local.name_prefix, "logs", local.bucket_suffix]))
 
   video_domain = var.video_domain
   admin_domain = var.admin_domain

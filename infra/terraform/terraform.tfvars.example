@@ -30,6 +30,11 @@ cloudfront_public_key_path = "../../public_key.pem"
 #   -----END PUBLIC KEY-----
 # EOT
 
+# S3 バケット名の接尾辞。
+# 未指定ならアカウント ID が付き、他アカウントと衝突しない名前になる。
+#   mimicast-prod-media-123456789012
+# bucket_suffix = "123456789012"
+
 # 既定は 64 GiB
 max_upload_bytes = 68719476736
 

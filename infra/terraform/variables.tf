@@ -97,6 +97,21 @@ variable "alert_email" {
   type        = string
 }
 
+variable "bucket_suffix" {
+  description = <<-EOT
+    S3 バケット名へ付ける接尾辞。
+    バケット名はグローバルに一意である必要があるため、既定ではアカウント ID を使う。
+    タイムスタンプなど任意の文字列でもよい。
+  EOT
+  type        = string
+  default     = null
+
+  validation {
+    condition     = var.bucket_suffix == null || can(regex("^[a-z0-9-]*$", var.bucket_suffix))
+    error_message = "bucket_suffix は英小文字・数字・ハイフンのみ。"
+  }
+}
+
 variable "max_upload_bytes" {
   description = "アップロードサイズの上限（既定 64 GiB）"
   type        = number
